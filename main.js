@@ -5,41 +5,53 @@ canvas.height = 750
 const ctx = canvas.getContext('2d')
 
 ctx.lineCap = 'round'
+ctx.lineJoin = 'round'
 
 const colorInput = document.getElementById('colorInput')
-colorInput.onchange = () => { ctx.strokeStyle = colorInput.value }
-
-ctx.strokeStyle = colorInput.value
+let currentColor = colorInput.value
+colorInput.onchange = () => { currentColor = colorInput.value }
 
 const widthInput = document.getElementById('widthInput')
-widthInput.onchange = () => { ctx.lineWidth = widthInput.value }
+let currentWidth = widthInput.value
+widthInput.onchange = () => { currentWidth = widthInput.value }
 
-ctx.lineWidth = widthInput.value
+let paths = []
 
-let oldX = -1
-let oldY = -1
-
-let drawing = true
+let drawing = false
 
 let mouseDown = 0;
 canvas.onmousedown = () => { ++mouseDown; }
 canvas.onmouseup = () => { --mouseDown; }
 
+function drawPaths() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  for (const path of paths) {
+    ctx.lineWidth = path.width
+    ctx.strokeStyle = path.color
+    ctx.beginPath()
+    ctx.moveTo(path.points[0].x, path.points[0].y)
+    for (const point of path.points) {
+      ctx.lineTo(point.x, point.y)
+    }
+    ctx.stroke()
+  }
+}
+
+function undo() {
+  paths.pop()
+  drawPaths()
+}
+
 document.body.onmousemove = ev => {
   if (mouseDown) {
-    if (oldX < 0) {
-      oldX = ev.clientX
-      oldY = ev.clientY
+    if (drawing) {
+      paths[paths.length - 1].points.push({x: ev.clientX, y: ev.clientY})
+    } else {
+      drawing = true
+      paths.push({color: currentColor, width: currentWidth, points: [{x: ev.clientX, y: ev.clientY}]})
     }
-    ctx.beginPath()
-    ctx.moveTo(oldX, oldY)
-    ctx.lineTo(ev.clientX, ev.clientY)
-    ctx.stroke()
-
-    oldX = ev.clientX
-    oldY = ev.clientY
+    drawPaths()
   } else {
-    oldX = -1
-    oldY = -1
+    drawing = false
   }
 }
