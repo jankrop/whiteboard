@@ -8,6 +8,11 @@
   <body style="margin: 0">
     <canvas id="canvas" style="border: 4px solid black; cursor: cell"></canvas>
     <br>
+    <button id="penBtn">Pen</button>
+    <button id="eraserBtn">Eraser</button>
+    Current tool:
+    <span id="currentTool">pen</span>
+    <br>
     <input type="color" id="colorInput" value="black">
     <input type="range" min="1" max="10" value="4" id="widthInput">
     <button onclick="undo()">Undo</button>

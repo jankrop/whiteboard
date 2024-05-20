@@ -15,18 +15,35 @@ const widthInput = document.getElementById('widthInput')
 let currentWidth = widthInput.value
 widthInput.onchange = () => { currentWidth = widthInput.value }
 
+const penBtn = document.getElementById('penBtn')
+const eraserBtn = document.getElementById('eraserBtn')
+const currentToolText = document.getElementById('currentTool')
+
+let currentTool = 'pen'
+
+penBtn.onclick = () => {
+  currentTool = 'pen'
+  currentToolText.innerText = 'pen'
+}
+
+eraserBtn.onclick = () => {
+  currentTool = 'eraser'
+  currentToolText.innerText = 'eraser'
+}
+
 let paths = []
 
 let drawing = false
 let drawingLine = false
 
 let mouseDown = 0;
-canvas.onmousedown = () => { ++mouseDown; }
-canvas.onmouseup = () => { --mouseDown; }
+canvas.onmousedown = ev => { if (ev.which === 1) ++mouseDown }
+canvas.onmouseup = ev => { if (ev.which === 1) --mouseDown }
 
 function drawPaths() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   for (const path of paths) {
+    ctx.globalCompositeOperation = path.eraser ? 'destination-out' : 'source-over'
     ctx.lineWidth = path.width
     ctx.strokeStyle = path.color
     ctx.beginPath()
@@ -51,7 +68,12 @@ document.body.onmousemove = ev => {
       paths[paths.length - 1].points.push({x: ev.clientX, y: ev.clientY})
     } else {
       drawing = true
-      paths.push({color: currentColor, width: currentWidth, points: [{x: ev.clientX, y: ev.clientY}]})
+      paths.push({
+        color: currentColor, 
+        width: currentWidth, 
+        points: [{x: ev.clientX, y: ev.clientY}],
+        eraser: currentTool === 'eraser',
+      })
       if (shiftPressed) {
         drawingLine = true
         paths[paths.length - 1].points.push({x: ev.clientX, y: ev.clientY})
@@ -62,13 +84,14 @@ document.body.onmousemove = ev => {
     drawing = false
     drawingLine = false
   }
-  console.log(drawingLine)
 }
 
 document.body.onmouseup = ev => {
   drawing = false
   drawingLine = false
 }
+
+canvas.oncontextmenu = ev => ev.preventDefault()
 
 let shiftPressed = false
 let ctrlPressed = false
