@@ -71,11 +71,22 @@ document.body.onmouseup = ev => {
 }
 
 let shiftPressed = false
+let ctrlPressed = false
+let undoing = false
 
 document.onkeydown = ev => {
+  if (ctrlPressed && ev.key === 'z' && !undoing) {
+    undoing = true
+    undo()
+  }
   shiftPressed = ev.shiftKey
+  ctrlPressed = ev.ctrlKey
 }
 
 document.onkeyup = ev => {
+  if (ev.key === 'z') {
+    undoing = false
+  }
   shiftPressed = ev.shiftKey
+  ctrlPressed = ev.ctrlKey
 }
