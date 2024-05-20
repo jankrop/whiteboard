@@ -18,6 +18,7 @@ widthInput.onchange = () => { currentWidth = widthInput.value }
 let paths = []
 
 let drawing = false
+let drawingLine = false
 
 let mouseDown = 0;
 canvas.onmousedown = () => { ++mouseDown; }
@@ -44,14 +45,37 @@ function undo() {
 
 document.body.onmousemove = ev => {
   if (mouseDown) {
-    if (drawing) {
+    if (drawingLine) {
+      paths[paths.length - 1].points[1] = {x: ev.clientX, y: ev.clientY}
+    } else if (drawing) {
       paths[paths.length - 1].points.push({x: ev.clientX, y: ev.clientY})
     } else {
       drawing = true
       paths.push({color: currentColor, width: currentWidth, points: [{x: ev.clientX, y: ev.clientY}]})
+      if (shiftPressed) {
+        drawingLine = true
+        paths[paths.length - 1].points.push({x: ev.clientX, y: ev.clientY})
+      }
     }
     drawPaths()
   } else {
     drawing = false
+    drawingLine = false
   }
+  console.log(drawingLine)
+}
+
+document.body.onmouseup = ev => {
+  drawing = false
+  drawingLine = false
+}
+
+let shiftPressed = false
+
+document.onkeydown = ev => {
+  shiftPressed = ev.shiftKey
+}
+
+document.onkeyup = ev => {
+  shiftPressed = ev.shiftKey
 }
