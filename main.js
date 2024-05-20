@@ -31,6 +31,17 @@ eraserBtn.onclick = () => {
   currentToolText.innerText = 'eraser'
 }
 
+document.getElementById('plainBgBtn').onclick = () => {
+  canvas.style.backgroundImage = 'none'
+}
+document.getElementById('linesBgBtn').onclick = () => {
+  canvas.style.backgroundImage = 'url(./img/backgrounds/lines.png)'
+}
+document.getElementById('checkerboardBgBtn').onclick = () => {
+  canvas.style.backgroundImage = 'url(./img/backgrounds/checkerboard.png)'
+}
+
+
 let paths = []
 
 let drawing = false
