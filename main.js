@@ -1,6 +1,6 @@
 const canvas = document.getElementById('canvas')
 canvas.width = 1006
-canvas.height = 718
+canvas.height = 670
 
 const ctx = canvas.getContext('2d')
 
@@ -17,18 +17,19 @@ widthInput.onchange = () => { currentWidth = widthInput.value }
 
 const penBtn = document.getElementById('penBtn')
 const eraserBtn = document.getElementById('eraserBtn')
-const currentToolText = document.getElementById('currentTool')
 
 let currentTool = 'pen'
 
 penBtn.onclick = () => {
   currentTool = 'pen'
-  currentToolText.innerText = 'pen'
+  penBtn.classList.add('bg-slate-200')
+  eraserBtn.classList.remove('bg-slate-200')
 }
 
 eraserBtn.onclick = () => {
   currentTool = 'eraser'
-  currentToolText.innerText = 'eraser'
+  eraserBtn.classList.add('bg-slate-200')
+  penBtn.classList.remove('bg-slate-200')
 }
 
 document.getElementById('plainBgBtn').onclick = () => {
@@ -40,7 +41,6 @@ document.getElementById('linesBgBtn').onclick = () => {
 document.getElementById('checkerboardBgBtn').onclick = () => {
   canvas.style.backgroundImage = 'url(./img/backgrounds/checkerboard.png)'
 }
-
 
 let paths = []
 
@@ -71,23 +71,30 @@ function undo() {
   drawPaths()
 }
 
+function getMouseCoords(ev) {
+  return {
+    x: ev.clientX - canvas.getBoundingClientRect().left,
+    y: ev.clientY - canvas.getBoundingClientRect().top,
+  }
+}
+
 document.body.onmousemove = ev => {
   if (mouseDown) {
     if (drawingLine) {
-      paths[paths.length - 1].points[1] = {x: ev.clientX, y: ev.clientY}
+      paths[paths.length - 1].points[1] = getMouseCoords(ev)
     } else if (drawing) {
-      paths[paths.length - 1].points.push({x: ev.clientX, y: ev.clientY})
+      paths[paths.length - 1].points.push(getMouseCoords(ev))
     } else {
       drawing = true
       paths.push({
         color: currentColor, 
         width: currentWidth, 
-        points: [{x: ev.clientX, y: ev.clientY}],
+        points: [getMouseCoords(ev)],
         eraser: currentTool === 'eraser',
       })
       if (shiftPressed) {
         drawingLine = true
-        paths[paths.length - 1].points.push({x: ev.clientX, y: ev.clientY})
+        paths[paths.length - 1].points.push(getMouseCoords(ev))
       }
     }
     drawPaths()
