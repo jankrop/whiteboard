@@ -48,7 +48,7 @@ let drawing = false
 let drawingLine = false
 
 let mouseDown = 0;
-document.body.onmousedown = ev => { if (ev.which === 1) ++mouseDown; console.log('hi') }
+document.body.onmousedown = ev => { if (ev.which === 1) ++mouseDown; }
 document.body.onmouseup = ev => {
   if (ev.which === 1) --mouseDown
   drawing = false
@@ -106,7 +106,6 @@ document.body.onmousemove = ev => {
     drawing = false
     drawingLine = false
   }
-  console.log(mouseDown)
 }
 
 canvas.oncontextmenu = ev => ev.preventDefault()
