@@ -48,8 +48,12 @@ let drawing = false
 let drawingLine = false
 
 let mouseDown = 0;
-canvas.onmousedown = ev => { if (ev.which === 1) ++mouseDown }
-canvas.onmouseup = ev => { if (ev.which === 1) --mouseDown }
+document.body.onmousedown = ev => { if (ev.which === 1) ++mouseDown; console.log('hi') }
+document.body.onmouseup = ev => {
+  if (ev.which === 1) --mouseDown
+  drawing = false
+  drawingLine = false
+}
 
 function drawPaths() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -84,7 +88,7 @@ document.body.onmousemove = ev => {
       paths[paths.length - 1].points[1] = getMouseCoords(ev)
     } else if (drawing) {
       paths[paths.length - 1].points.push(getMouseCoords(ev))
-    } else {
+    } else if (canvas.matches(':hover')) {
       drawing = true
       paths.push({
         color: currentColor, 
@@ -102,11 +106,7 @@ document.body.onmousemove = ev => {
     drawing = false
     drawingLine = false
   }
-}
-
-document.body.onmouseup = ev => {
-  drawing = false
-  drawingLine = false
+  console.log(mouseDown)
 }
 
 canvas.oncontextmenu = ev => ev.preventDefault()
