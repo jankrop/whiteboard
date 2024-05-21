@@ -43,6 +43,7 @@ document.getElementById('gridBgBtn').onclick = () => {
 }
 
 let paths = []
+let redoPaths = []
 
 let drawing = false
 let drawingLine = false
@@ -71,7 +72,18 @@ function drawPaths() {
 }
 
 function undo() {
+  if (!paths) return
+  const lastPath = paths[paths.length - 1]
   paths.pop()
+  redoPaths.push(lastPath)
+  drawPaths()
+}
+
+function redo() {
+  if (!redoPaths) return
+  const lastPath = redoPaths[redoPaths.length - 1]
+  redoPaths.pop()
+  paths.push(lastPath)
   drawPaths()
 }
 
@@ -90,6 +102,7 @@ document.body.onmousemove = ev => {
       paths[paths.length - 1].points.push(getMouseCoords(ev))
     } else if (canvas.matches(':hover')) {
       drawing = true
+      redoPaths = []
       paths.push({
         color: currentColor, 
         width: currentWidth, 
