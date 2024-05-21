@@ -38,8 +38,8 @@ document.getElementById('plainBgBtn').onclick = () => {
 document.getElementById('linesBgBtn').onclick = () => {
   canvas.style.backgroundImage = 'url(./img/backgrounds/lines.png)'
 }
-document.getElementById('checkerboardBgBtn').onclick = () => {
-  canvas.style.backgroundImage = 'url(./img/backgrounds/checkerboard.png)'
+document.getElementById('gridBgBtn').onclick = () => {
+  canvas.style.backgroundImage = 'url(./img/backgrounds/grid.png)'
 }
 
 let paths = []
