@@ -1,0 +1,26 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.swp
+
+# Django
+*.log
+*.pot
+local_settings.py
+
+# Vue.js
+frontend/dist/
+frontend/node_modules/
+frontend/npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Python virtual environment
+.venv/

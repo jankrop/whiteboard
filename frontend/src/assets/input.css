@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .bg-lines {
+        background-image: url("./img/backgrounds/lines.png");
+    }
+
+    .bg-grid {
+        background-image: url("./img/backgrounds/grid.png");
+    }
+
+    .bg-conic {
+        background: conic-gradient(#33415544, #334155);
+    }
+
+    .pill-menu {
+        @apply flex rounded-full bg-slate-50 h-9 mx-2;
+    }
+
+    .pill-menu button {
+        @apply rounded-full p-1.5 w-9 h-9;
+    }
+
+    .selected {
+        @apply outline outline-2 outline-slate-700;
+    }
+}
+
+/* Test comment */
