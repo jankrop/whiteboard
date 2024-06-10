@@ -1,0 +1,26 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My App</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'frontend/assets/index-D0SjyIad.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body class="h-screen bg-slate-300 flex items-center justify-center">
+    <div class="fixed top-0 left-0 w-full h-screen bg-slate-300 flex justify-center items-center -z-10">
+        <div class="text-2xl mr-3">Loading whiteboard</div>
+        <div class="w-8 h-8 rounded-full bg-conic animate-spin"></div>
+    </div>
+    <div id="app"></div>
+    <script>
+        window.djangoUrls = {
+            home: '{{ home_page_url }}',
+            get_board_data: '{{ board_data_url }}',
+        };
+    </script>
+    <script src="{% static 'frontend/assets/index-CrbR2v5n.js' %}"></script>
+</body>
+</html>

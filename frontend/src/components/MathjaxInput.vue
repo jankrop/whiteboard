@@ -26,7 +26,7 @@ function showPopup() {
 
         Please enter a math formula, as valid LaTeX
         <br>
-        <input class="w-full bg-transparent resize-none border-none outline outline-1 outline-slate-700 rounded p-2 font-mono" @input="updateMath">
+        <input type="text" class="font-mono" @input="updateMath">
         <p ref="formula">\[  \]</p>
     </Popup>
 </template>

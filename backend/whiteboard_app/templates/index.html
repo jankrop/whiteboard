@@ -1,23 +1,57 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My App</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'frontend/assets/index-CCQpFkDs.css' %}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-</head>
-<body class="h-screen bg-slate-300 flex items-center justify-center">
-    <div id="app"></div>
+{% block title %}Whiteboard{% endblock %}
+
+{% block content %}
+    <div class="h-screen flex justify-center items-center flex-col">
+        <div>
+            <div class="flex h-16 overflow-hidden">
+                <div class="text-5xl font-bold mr-3">A blank slate for your</div>
+                <div class="w-72" id="changingTextBox">
+                    <div class="text-5xl font-bold text-blue-500" id="currentText">notes</div>
+                    <div class="text-5xl">&nbsp;</div>
+                    <div class="text-5xl font-bold text-blue-500" id="nextText">doodles</div>
+                </div>
+            </div>
+            <div class="text-2xl">The Jamboard replacement you've been waiting for</div>
+        </div>
+        <div class="flex mt-4">
+            <a href="" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-all">Sign me up!</a>
+            <a href="{% url 'login' %}" class="ms-3 secondary">Log in</a>
+        </div>
+    </div>
+
+    <style>
+    .moved {
+        transform: translateY(-150%);
+    }
+    </style>
+
     <script>
-        window.djangoUrls = {
-            apiLogin: '{{ api_login_url }}',
-            apiLogout: '{{ api_logout_url }}',
-            home: '{{ home_url }}'
-        };
+        const texts = ['notes', 'doodles', 'brainstorms', 'todos', 'teaching'];
+        let currentTextIndex = 0;
+        let nextTextIndex = 1;
+
+        const currentText = document.getElementById('currentText');
+        const nextText = document.getElementById('nextText');
+        const changingTextBox = document.getElementById('changingTextBox');
+
+        function switchText() {
+            currentText.innerText = texts[currentTextIndex];
+            nextText.innerText = texts[nextTextIndex];
+
+            currentTextIndex = (currentTextIndex + 1) % texts.length;
+            nextTextIndex = (nextTextIndex + 1) % texts.length;
+        }
+        switchText();
+        setInterval(() => {
+            changingTextBox.classList.add('transition-transform');
+            changingTextBox.classList.add('moved');
+            setTimeout(() => {
+                switchText();
+                changingTextBox.classList.remove('transition-transform');
+                changingTextBox.classList.remove('moved');
+            }, 250);
+        }, 4000);
     </script>
-    <script src="{% static 'frontend/assets/index--5KKLxNe.js' %}"></script>
-</body>
-</html>
+{% endblock %}

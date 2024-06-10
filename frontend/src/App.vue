@@ -2,11 +2,13 @@
 import {ref, onMounted, computed} from "vue";
 
 const uuid = window.location.pathname.split('/').pop()
+// const uuid = ref('990000e6-7c7d-4342-99a8-61abcd2745a8')
 const uuidRef = ref(uuid)
 
 const loading = ref(true)
 
 const canvas = ref(null)
+const canvasOverlay = ref(null)
 
 const canvasWidth = ref(1006)
 const canvasHeight = ref(670)
@@ -26,7 +28,7 @@ const selectedObject = ref(null)
 const objects = ref([])
 let redoPaths = []
 
-const textObjects = computed(() => objects.value.filter(obj => obj.type === 'text' || obj.type === 'math'))
+let textObjects = ref([])
 
 const textObjectsDOM = ref([])
 
@@ -97,6 +99,20 @@ function getMouseCoords(ev) {
     return {
         x: ev.clientX - canvas.value.getBoundingClientRect().left,
         y: ev.clientY - canvas.value.getBoundingClientRect().top,
+    }
+}
+
+async function getBoardData() {
+    try {
+        const response = await fetch(window.djangoUrls.get_board_data)
+        const response_json = await response.json()
+        title.value = response_json.title
+        objects.value = response_json.objects
+        textObjects = computed(() => objects.value.filter(obj => obj.type === 'text' || obj.type === 'math'))
+        loading.value = false
+        console.log(response_json)
+    } catch (e) {
+        console.log('Error while fetching data: ', e)
     }
 }
 
@@ -189,24 +205,22 @@ function main() {
         shiftPressed = ev.shiftKey
         ctrlPressed = ev.ctrlKey
     }
-}
 
-setTimeout(() => {
-    loading.value = false
-}, 3000)
+    getBoardData()
+}
 
 onMounted(main)
 </script>
 
 <template>
-    <h1 class="text-4xl font-bold text-center">
+    <h1 :class="{ '!block': !loading }" class="hidden text-4xl font-bold text-center">
         <input v-if="editTitle" v-model="title"
                @keydown.enter="editTitle = !title.replace(' ', '')" @blur="editTitle = false"
                class="text-4xl font-bold text-center bg-slate-50 rounded border-none outline-none" placeholder="Board title">
         <span v-else @click="editTitle = true">{{ title }}</span>
     </h1>
-    <div class="my-4" :class="backgroundClass" style="width: 1006px; height: 670px;">
-        <div class="absolute">
+    <div :class="[{ '!block': !loading }, backgroundClass]" class="hidden my-4" style="width: 1006px; height: 670px;">
+        <div class="absolute" ref="canvasOverlay">
             <div class="absolute text-lg p-1"
                  :class="{'selected': selectedObject == text.id}"
                  :style="{'left': text.coords.x + 'px', 'top': text.coords.y + 'px'}"
@@ -227,7 +241,7 @@ onMounted(main)
         <canvas ref="canvas" :width="canvasWidth" :height="canvasHeight" class="absolute"
                 :class="{'cursor-crosshair': currentTool !== 'select', 'pointer-events-none': currentTool === 'select'}"></canvas>
     </div>
-    <div class="flex justify-center text-center text-xl">
+    <div :class="{ '!flex': !loading }" class="hidden justify-center text-center text-xl">
         <div class="pill-menu">
             <button @click="currentTool = 'select'" :class="{ 'bg-slate-200': currentTool === 'select' }">
                 <Icon>arrow_selector_tool</Icon>
@@ -271,12 +285,9 @@ onMounted(main)
             </button>
         </div>
     </div>
-    <div v-if="loading" class="fixed top-0 left-0 w-full h-screen bg-slate-300 flex justify-center items-center">
-        <div class="text-2xl mr-3">Loading whiteboard</div>
-        <div class="w-8 h-8 rounded-full bg-conic animate-spin"></div>
-        <div class="fixed bottom-10 text-slate-500">Board ID: {{ uuidRef }}</div>
-    </div>
+<!--    <div v-if="loading" class="fixed top-0 left-0 w-full h-screen bg-slate-300 flex justify-center items-center">-->
+<!--        <div class="text-2xl mr-3">Loading whiteboard</div>-->
+<!--        <div class="w-8 h-8 rounded-full bg-conic animate-spin"></div>-->
+<!--        <div class="fixed bottom-10 text-slate-500">Board ID: {{ uuidRef }}</div>-->
+<!--    </div>-->
 </template>
-
-<style scoped>
-</style>

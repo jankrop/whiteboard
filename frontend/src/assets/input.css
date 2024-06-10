@@ -28,6 +28,18 @@
     .selected {
         @apply outline outline-2 outline-slate-700;
     }
+
+    input[type=text], input[type=email], input[type=password] {
+        @apply w-full bg-transparent outline outline-1 outline-slate-700 rounded p-2;
+    }
+
+    button.primary, a.primary {
+        @apply bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-all
+    }
+
+    button.secondary, a.secondary {
+        @apply border border-2 border-blue-500 hover:bg-blue-500 text-blue-500 hover:text-white font-bold py-2 px-4 rounded transition-all
+    }
 }
 
 /* Test comment */
