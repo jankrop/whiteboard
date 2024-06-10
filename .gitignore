@@ -28,3 +28,7 @@ Thumbs.db
 
 # Tailwind CSS output
 frontend/src/assets/output.css
+
+# Other
+backend/whiteboard_app/static/main.css
+manage.py
