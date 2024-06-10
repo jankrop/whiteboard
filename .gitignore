@@ -25,3 +25,6 @@ Thumbs.db
 
 # Python virtual environment
 .venv/
+
+# Tailwind CSS output
+frontend/src/assets/output.css
