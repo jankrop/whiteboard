@@ -24,5 +24,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('new/', views.new_board, name='new_board'),
     path('board/<slug:id>', views.board, name='board'),
-    path('board/<slug:id>/data', views.get_board_data, name='get_board_data')
+    path('board/<slug:id>/data', views.get_board_data, name='get_board_data'),
+    path('board/<slug:id>/save', views.save_board, name='save_board'),
 ]

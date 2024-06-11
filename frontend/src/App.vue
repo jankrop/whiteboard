@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, computed} from "vue";
+import {ref, onMounted, computed, watch} from "vue";
 
 const uuid = window.location.pathname.split('/').pop()
 // const uuid = ref('990000e6-7c7d-4342-99a8-61abcd2745a8')
@@ -13,12 +13,15 @@ const canvasOverlay = ref(null)
 const canvasWidth = ref(1006)
 const canvasHeight = ref(670)
 
+const linesUrl = ref(`url( ${window.djangoUrls.img_lines} )`)
+const gridUrl = ref(`url( ${window.djangoUrls.img_grid} )`)
+
 const currentColor = ref('black')
 const currentWidth = ref(2)
 
 const currentTool = ref('pen')
 
-const backgroundClass = ref('bg-slate-50')
+const backgroundStyle = ref('none')
 
 const title = ref('New board')
 const editTitle = ref(false)
@@ -108,13 +111,45 @@ async function getBoardData() {
         const response_json = await response.json()
         title.value = response_json.title
         objects.value = response_json.objects
+        backgroundStyle.value = response_json.background
         textObjects = computed(() => objects.value.filter(obj => obj.type === 'text' || obj.type === 'math'))
+        drawPaths()
         loading.value = false
-        console.log(response_json)
     } catch (e) {
         console.log('Error while fetching data: ', e)
     }
 }
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+async function save() {
+    try {
+        const formData = new FormData()
+        formData.append("title", title.value)
+        formData.append("background", backgroundStyle.value)
+        formData.append("objects", JSON.stringify(objects.value))
+        const response = await fetch(window.djangoUrls.save_board, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            body: formData,
+        })
+    } catch (e) {
+        console.log('Error while saving: ', e)
+    }
+}
+
+let previousObjects = JSON.stringify(objects.value)
+
+setInterval(() => {
+    if (previousObjects !== JSON.stringify(objects.value)) {
+        previousObjects = JSON.stringify(objects.value)
+        save()
+    }
+}, 1000)
 
 function main() {
     ctx = canvas.value.getContext('2d')
@@ -209,17 +244,24 @@ function main() {
     getBoardData()
 }
 
+function saveTitle() {
+    editTitle.value = !title.value.replace(' ', '');
+    if (!editTitle.value) {
+        save()
+    }
+}
+
 onMounted(main)
 </script>
 
 <template>
     <h1 :class="{ '!block': !loading }" class="hidden text-4xl font-bold text-center">
         <input v-if="editTitle" v-model="title"
-               @keydown.enter="editTitle = !title.replace(' ', '')" @blur="editTitle = false"
+               @keydown.enter="saveTitle" @blur="editTitle = false"
                class="text-4xl font-bold text-center bg-slate-50 rounded border-none outline-none" placeholder="Board title">
         <span v-else @click="editTitle = true">{{ title }}</span>
     </h1>
-    <div :class="[{ '!block': !loading }, backgroundClass]" class="hidden my-4" style="width: 1006px; height: 670px;">
+    <div :class="{ '!block': !loading }" :style="{ 'background-image': backgroundStyle }" class="hidden my-4 bg-slate-50" style="width: 1006px; height: 670px;">
         <div class="absolute" ref="canvasOverlay">
             <div class="absolute text-lg p-1"
                  :class="{'selected': selectedObject == text.id}"
@@ -274,13 +316,13 @@ onMounted(main)
         </div>
 
         <div class="pill-menu">
-            <button @click="backgroundClass = 'bg-slate-50'">
+            <button @click="backgroundStyle = 'none'; save()">
                 <Icon>check_box_outline_blank</Icon>
             </button>
-            <button @click="backgroundClass = 'bg-lines'">
+            <button @click="backgroundStyle = linesUrl; save()">
                 <Icon>table_rows</Icon>
             </button>
-            <button @click="backgroundClass = 'bg-grid'">
+            <button @click="backgroundStyle = gridUrl; save()">
                 <Icon>grid_on</Icon>
             </button>
         </div>

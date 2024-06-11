@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
-{#    <link rel="stylesheet" href="{% static 'frontend/assets/index-DU2vbNRN.css' %}">#}
     <link rel="stylesheet" href="{% static 'main.css' %}">
+    {% block head %}{% endblock %}
 </head>
 <body class="bg-slate-300">
     {% if user.is_authenticated %}
         <header class="fixed top-0 left-0 w-full bg-slate-50 p-3 flex items-center">
-            <h1 class="font-bold text-3xl">whiteboard</h1>
+            <a href="{% url 'index' %}" class="font-bold text-3xl">whiteboard</a>
             <div class="ml-auto">
                 <span class="text-xl">Welcome, {{ user.username }}</span>
                 <form class="inline" method="post" action="{% url 'logout' %}">
